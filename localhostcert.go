@@ -3,6 +3,7 @@ package localhostcert
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
 )
 
 var (
@@ -77,4 +78,24 @@ func GetKeyStream() io.Reader {
 	b := new(bytes.Buffer)
 	b.Write([]byte(key))
 	return b
+}
+
+func GetCertTempFilePath() (string, error) {
+	tcertfile, err := ioutil.TempFile("", "localhostcert_tempcert_")
+	if err != nil {
+		return "", err
+	}
+	path := tcertfile.Name()
+	tcertfile.Write([]byte(cert))
+	return path, tcertfile.Close()
+}
+
+func GetKeyTempFilePath() (string, error) {
+	tkeyfile, err := ioutil.TempFile("", "localhostcert_tempkey_")
+	if err != nil {
+		return "", err
+	}
+	path := tkeyfile.Name()
+	tkeyfile.Write([]byte(key))
+	return path, tkeyfile.Close()
 }
